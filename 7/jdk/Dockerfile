@@ -12,7 +12,8 @@ ENV JAVA_VERSION_MAJOR=7 \
     JAVA_PACKAGE=jdk \
     JAVA_HOME=/opt/jdk \
     PATH=${PATH}:/opt/jdk/bin \
-    LANG=C.UTF-8
+    LANG=C.UTF-8 \
+    DOCKERIZE_VERSION=0.2.0
 
 # do all in one step
 RUN apk upgrade --update && \
@@ -26,6 +27,8 @@ RUN apk upgrade --update && \
     http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-b${JAVA_VERSION_BUILD}/${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz && \
     gunzip /tmp/java.tar.gz && \
     tar -C /opt -xf /tmp/java.tar && \
+    curl -sSL https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v0.2.0.tar.gz | tar zxf - -C /bin && \
+    chown root:root /bin/dockerize && \
     apk del curl && \
     ln -s /opt/jdk1.${JAVA_VERSION_MAJOR}.0_${JAVA_VERSION_MINOR} /opt/jdk && \
     rm -rf /opt/jdk/*src.zip \
