@@ -49,6 +49,26 @@ gen_dockerfile() {
   echo "failed"
 }
 
+gen_makefile() {
+  JVM_PACKAGE="$1"
+  MAKEFILE_TEMPLATE="Makefile.tpl"
+  MAKEFILE_TARGET="${JVM_MAJOR}/${JVM_MINOR}b${JVM_BUILD}/${JVM_PACKAGE}/${JAVA_JCE}/Makefile"
+  MAKEFILE_TARGET_DIR="$(dirname ${MAKEFILE_TARGET})"
+
+  echo -en "Generating Makefile for ${JVM_MAJOR}u${JVM_MINOR}b${JVM_BUILD} ${JVM_PACKAGE} (${JAVA_JCE:-$JCE_FLAVORS} JCE policy).. "
+  sed "s/%JVM_MAJOR%/${JVM_MAJOR}/g;
+       s/%JVM_MINOR%/${JVM_MINOR}/g;
+       s/%JVM_BUILD%/${JVM_BUILD}/g;
+       s/%JVM_PACKAGE%/${JVM_PACKAGE}/g;
+       s/%JAVA_JCE%/${JAVA_JCE:-standard}/g;
+       s/%DCEVM_INSTALLER_URL%/${DCEVM_INSTALLER_URL}/g;
+       s/%DCEVM_INSTALLER_NAME%/${DCEVM_INSTALLER_NAME}/g;
+       s/%GLIBC_VERSION%/${GLIBC_VERSION}/g" \
+    ${MAKEFILE_TEMPLATE} > ${MAKEFILE_TARGET} && \
+  echo "done" || \
+  echo "failed"
+}
+
 for version in ${JAVA_VERSIONS[@]}; do
   JVM_MAJOR=$(echo $version | cut -d- -f1)
   JVM_MINOR=$(echo $version | cut -d- -f2)
@@ -67,9 +87,11 @@ for version in ${JAVA_VERSIONS[@]}; do
     if [ "${JVM_MAJOR}" -eq "8" ]; then
       for JAVA_JCE in ${JCE_FLAVORS[@]}; do
         gen_dockerfile $JVM_FLAVOR
+        gen_makefile $JVM_FLAVOR
       done
     else
       gen_dockerfile $JVM_FLAVOR
+      gen_makefile $JVM_FLAVOR
     fi
 
   done
