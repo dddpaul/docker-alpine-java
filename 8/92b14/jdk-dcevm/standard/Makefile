@@ -13,4 +13,4 @@ release: build
 
 deploy: release
 	@docker push ${IMAGE}
-	@docker push ${IMAGE}:$(VERSION}
+	@docker push ${IMAGE}:${VERSION}
