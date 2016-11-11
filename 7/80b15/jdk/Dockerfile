@@ -14,7 +14,7 @@ ENV JAVA_VERSION_MAJOR=7 \
     JAVA_HOME=/opt/jdk \
     PATH=${PATH}:/opt/jdk/bin \
     GLIBC_VERSION=2.23-r3 \
-    DOCKERIZE_VERSION=0.2.0 \
+    AWAIT_VERSION=0.3.0 \
     LANG=C.UTF-8
 
 # do all in one step
@@ -39,8 +39,9 @@ RUN apk upgrade --update && \
       cp -v /tmp/UnlimitedJCEPolicyJDK8/*.jar /opt/jdk/jre/lib/security; \
     fi && \
     sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=30/ $JAVA_HOME/jre/lib/security/java.security && \
-    curl -sSL https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz | tar zxf - -C /bin && \
-    chown root:root /bin/dockerize && \
+    curl -sSL https://github.com/betalo-sweden/await/releases/download/v${AWAIT_VERSION}/await-linux-amd64 -o /bin/await && \
+    chown root:root /bin/await && \
+    chmod +x /bin/await && \
     apk del curl glibc-i18n && \
     rm -rf /opt/jdk/*src.zip \
            /opt/jdk/lib/missioncontrol \
